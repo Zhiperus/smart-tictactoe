@@ -1,0 +1,146 @@
+/* Variables */
+:root {
+  --primary-color: #2c3e50;
+  --secondary-color: #ecf0f1;
+  --highlight-color: #27ae60;
+  --border-color: #34495e;
+  --cell-size: 100px;
+  --font-family: "Arial", sans-serif;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-family);
+  background-color: var(--primary-color);
+  color: var(--secondary-color);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+header {
+  text-align: center;
+  padding: 20px 0;
+  background-color: var(--border-color);
+  width: 100%;
+  font-size: 2rem;
+  font-weight: bold;
+  letter-spacing: 2px;
+  color: var(--secondary-color);
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 12px;
+}
+
+.player-HUD {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 90%;
+  margin-bottom: 20px;
+}
+
+.player-info {
+  text-align: center;
+}
+
+.current-player {
+  background-color: green;
+}
+
+.crown {
+  visibility: hidden;
+  width: 50px;
+  margin-bottom: 10px;
+}
+
+table {
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+td {
+  width: var(--cell-size);
+  height: var(--cell-size);
+  border: 3px solid var(--border-color);
+  text-align: center;
+  font-size: 2rem;
+  font-weight: bold;
+  vertical-align: middle;
+  cursor: pointer;
+  text-indent: -9999px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+td:hover {
+  background-color: var(--highlight-color);
+  transform: scale(1.1);
+}
+
+.cell--player1 {
+  background-image: url(./images/X.png);
+  background-size: var(--cell-size) var(--cell-size);
+  color: #fff;
+}
+
+.cell--player2 {
+  background-image: url(./images/O.png);
+  background-size: var(--cell-size) var(--cell-size);
+  color: #fff;
+}
+
+.cell--win {
+  animation: glow 1s infinite alternate;
+}
+
+footer {
+  margin-top: 35px;
+}
+
+.menu__link {
+  display: block;
+  text-decoration: none;
+  font-size: 1.2rem;
+  margin: 10px 0;
+  padding: 15px 30px;
+  color: white;
+  background-color: #4a90e2;
+  border-radius: 5px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  font-weight: 600;
+}
+
+.menu__link:hover {
+  background-color: #357ab8;
+  transform: scale(1.05);
+}
+
+@keyframes glow {
+  from {
+    box-shadow: 0 0 10px var(--highlight-color);
+  }
+  to {
+    box-shadow: 0 0 20px var(--highlight-color);
+  }
+}
+
+@media (max-width: 600px) {
+  td {
+    width: 60px;
+    height: 60px;
+    font-size: 1.5rem;
+  }
+
+  .player-HUD {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .player-info {
+    margin-bottom: 10px;
+  }
+}
