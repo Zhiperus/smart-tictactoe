@@ -82,13 +82,13 @@ td:hover {
 }
 
 .cell--player1 {
-  background-image: url(./images/X.png);
+  background-image: url(../images/X.png);
   background-size: var(--cell-size) var(--cell-size);
   color: #fff;
 }
 
 .cell--player2 {
-  background-image: url(./images/O.png);
+  background-image: url(../images/O.png);
   background-size: var(--cell-size) var(--cell-size);
   color: #fff;
 }

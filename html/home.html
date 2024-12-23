@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tic Tac Toe</title>
+    <link href="../css/home-styles.css" rel="stylesheet" />
+  </head>
+  <body class="page">
+    <header class="header">
+      <h1 class="header__title">Tic Tac Toe</h1>
+    </header>
+
+    <main class="main-content">
+      <div class="game-menu">
+        <h2 class="game-menu__title">Choose Your Mode</h2>
+        <button
+          href="./play-game.html"
+          class="game-menu__link"
+          id="player-vs-player-btn"
+        >
+          Player vs Player
+        </button>
+        <button
+          href="./computer-game.html"
+          class="game-menu__link"
+          id="computer-vs-player-btn"
+        >
+          Player vs Computer
+        </button>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <p class="footer__text">Made with ❤️ by Tic Tac Toe Team</p>
+    </footer>
+    <script>
+      // JavaScript for handling mode selection
+      document
+        .getElementById("player-vs-player-btn")
+        .addEventListener("click", () => {
+          // Redirect to game.html with mode as "pvp"
+          window.location.href = "play-game.html?mode=pvp";
+        });
+
+      document
+        .getElementById("computer-vs-player-btn")
+        .addEventListener("click", () => {
+          // Redirect to game.html with mode as "cvp"
+          window.location.href = "play-game.html?mode=cvp";
+        });
+    </script>
+  </body>
+</html>
