@@ -135,11 +135,10 @@ const clickCellAI = (event) => {
     let index = minimax(
       [...gameGrid[0], ...gameGrid[1], ...gameGrid[2]],
       "P2",
-      [-5, -5]
+      [row, col],
+      [(-5, -5)]
     ).index;
 
-    console.log([...gameGrid[0], ...gameGrid[1], ...gameGrid[2]]);
-    console.log("AI Move: " + index);
     gameGrid[Math.floor(index / 3)][index % 3] = "P2";
     document
       .getElementById(`cell-${index}`)
@@ -159,7 +158,7 @@ if (mode === "cvp")
   tableCells.forEach((cell) => cell.addEventListener("click", clickCellAI));
 else tableCells.forEach((cell) => cell.addEventListener("click", clickCell));
 
-function minimax(reboard, player, currPos) {
+function minimax(reboard, player, P1_currPos, P2_currPos) {
   let array = avail(reboard);
   const gameGrid = [
     reboard.slice(0, 3),
@@ -167,17 +166,11 @@ function minimax(reboard, player, currPos) {
     reboard.slice(6, 9),
   ];
 
-  if (checkWinner(gameGrid, currPos, "P1")) {
-    console.log("P1 WINNER");
-    console.log(gameGrid);
-    console.log("currPos: " + currPos);
+  if (checkWinner(gameGrid, P1_currPos, "P1")) {
     return {
       score: -10,
     };
-  } else if (checkWinner(gameGrid, currPos, "P2")) {
-    console.log("P2 WINNER");
-    console.log(gameGrid);
-    console.log("currPos: " + currPos);
+  } else if (checkWinner(gameGrid, P2_currPos, "P2")) {
     return {
       score: 10,
     };
@@ -195,10 +188,18 @@ function minimax(reboard, player, currPos) {
     reboard[array[i]] = player;
 
     if (player === "P2") {
-      var g = minimax(reboard, "P1", [Math.floor(index / 3), index % 3]);
+      var g = minimax(reboard, "P1", P1_currPos, [
+        Math.floor(index / 3),
+        index % 3,
+      ]);
       move.score = g.score;
     } else {
-      var g = minimax(reboard, "P2", [Math.floor(index / 3), index % 3]);
+      var g = minimax(
+        reboard,
+        "P2",
+        [Math.floor(index / 3), index % 3],
+        P2_currPos
+      );
       move.score = g.score;
     }
     reboard[array[i]] = move.index;
@@ -223,7 +224,6 @@ function minimax(reboard, player, currPos) {
       }
     }
   }
-  console.log(moves);
   return moves[bestMove];
 }
 
@@ -246,3 +246,10 @@ function avail(reboard) {
 // length
 // :
 // 3
+
+// P2 WINNER
+// app.js:179 (3) [Array(3), Array(3), Array(3)]0: (3)
+// ['P1', 1, 'P2']1: (3)
+// ['P2', 'P1', 'P1']2: (3)
+//  [6, 'P1', 'P2']length: 3[[Prototype]]: Array(0)
+//  currPos: 1,2
