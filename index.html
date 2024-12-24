@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Tic Tac Toe</title>
-    <link href="../css/global-styles.css" rel="stylesheet" />
+    <link href="./css/global-styles.css" rel="stylesheet" />
   </head>
   <body class="page">
     <header>
@@ -15,14 +15,14 @@
       <div class="game-menu">
         <h2 class="game-menu__title">Choose Your Mode</h2>
         <button
-          href="./play-game.html"
+          href="./html/play-game.html"
           class="game-menu__link"
           id="player-vs-player-btn"
         >
           Player vs Player
         </button>
         <button
-          href="./computer-game.html"
+          href="./html/computer-game.html"
           class="game-menu__link"
           id="computer-vs-player-btn"
         >
@@ -40,14 +40,14 @@
         .getElementById("player-vs-player-btn")
         .addEventListener("click", () => {
           // Redirect to game.html with mode as "pvp"
-          window.location.href = "play-game.html?mode=pvp";
+          window.location.href = "./html/play-game.html?mode=pvp";
         });
 
       document
         .getElementById("computer-vs-player-btn")
         .addEventListener("click", () => {
           // Redirect to game.html with mode as "cvp"
-          window.location.href = "play-game.html?mode=cvp";
+          window.location.href = "./html/play-game.html?mode=cvp";
         });
     </script>
   </body>
