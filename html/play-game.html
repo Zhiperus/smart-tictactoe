@@ -5,10 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>TicTacToe</title>
     <link href="../css/game-styles.css" rel="stylesheet" />
+    <link href="../css/global-styles.css" rel="stylesheet" />
   </head>
   <body>
     <header>
-      <h1>Tic Tac Toe</h1>
+      <h1 class="header__title">Tic Tac Toe</h1>
     </header>
     <div class="container">
       <section class="player-HUD">
@@ -33,38 +34,24 @@
       </section>
       <table>
         <tr class="row row-1">
+          <td id="cell-0">0</td>
           <td id="cell-1">1</td>
           <td id="cell-2">2</td>
-          <td id="cell-3">3</td>
         </tr>
         <tr class="row row-2">
+          <td id="cell-3">3</td>
           <td id="cell-4">4</td>
           <td id="cell-5">5</td>
-          <td id="cell-6">6</td>
         </tr>
         <tr class="row row-3">
+          <td id="cell-6">6</td>
           <td id="cell-7">7</td>
           <td id="cell-8">8</td>
-          <td id="cell-9">9</td>
         </tr>
       </table>
     </div>
-    <footer><a class="menu__link" href="home.html">Back</a></footer>
-    <script>
-      // Extract mode from URL
-      const params = new URLSearchParams(window.location.search);
-      const mode = params.get("mode"); // e.g., "pvp" or "cvp"
-      console.log(mode);
-
-      // Update UI based on the mode
-      const player2NameElement = document.getElementById("player2");
-      if (mode === "cvp") {
-        player2NameElement.textContent = "Computer";
-        // Add logic for computer moves here
-      }
-
-      // Game logic can follow here for both modes
-    </script>
+    <a class="menu__link" href="home.html">Back</a>
+    <footer><p class="footer__text">Made with ❤️ by Zhiperus</p></footer>
     <script src="../js/app.js" charset="UTF-8"></script>
   </body>
 </html>
