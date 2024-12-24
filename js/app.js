@@ -21,72 +21,63 @@ const gameGrid = [
   [6, 7, 8],
 ];
 const directions = [
-  { name: "RIGHT", dx: 0, dy: 1 },
-  { name: "TOP-RIGHT", dx: -1, dy: 1 },
-  { name: "TOP", dx: -1, dy: 0 },
-  { name: "TOP-LEFT", dx: -1, dy: -1 },
-  { name: "LEFT", dx: 0, dy: -1 },
-  { name: "BOTTOM-LEFT", dx: 1, dy: -1 },
-  { name: "BOTTOM", dx: 1, dy: 0 },
-  { name: "BOTTOM-RIGHT", dx: 1, dy: 1 },
+  { dx: 0, dy: 1 }, // RIGHT
+  { dx: -1, dy: 1 }, // TOP-RIGHT
+  { dx: -1, dy: 0 }, // TOP
+  { dx: -1, dy: -1 }, // TOP-LEFT
+  { dx: 0, dy: -1 }, // LEFT
+  { dx: 1, dy: -1 }, // BOTTOM-LEFT
+  { dx: 1, dy: 0 }, // BOTTOM
+  { dx: 1, dy: 1 }, // BOTTOM-RIGHT
 ];
 
 // Utility functions
-const isValidCell = (row, col) => col > -1 && col < 3 && row > -1 && row < 3;
-
+const isValidCell = (row, col) => row >= 0 && row < 3 && col >= 0 && col < 3;
 const getPlayerSymbol = () => (currentPlayer() === "player1" ? "P1" : "P2");
-
 const currentPlayer = () => players[currentPlayerIndex];
 
 // Checker functions
-const iterateCells = (gameGrid, startPos, dx, dy, player) => {
+const iterateCells = (grid, startPos, dx, dy, player) => {
   let [row, col] = startPos;
-  const playerSymbol = player === "" ? getPlayerSymbol() : player;
+  const playerSymbol = player || getPlayerSymbol();
 
   for (let i = 0; i < 2; i++) {
     row += dx;
     col += dy;
-    if (!isValidCell(row, col) || !(gameGrid[row][col] === playerSymbol)) {
+    if (!isValidCell(row, col) || grid[row][col] !== playerSymbol) {
       return false;
     }
   }
   return true;
 };
 
-const checkLines = (gameGrid, gridPos, player) =>
-  directions.some(({ dx, dy }) =>
-    iterateCells(gameGrid, gridPos, dx, dy, player)
-  );
+const checkLines = (grid, startPos, player) =>
+  directions.some(({ dx, dy }) => iterateCells(grid, startPos, dx, dy, player));
 
-const checkAdjacent = (gameGrid, startPos, player) => {
-  let [row, col] = startPos;
-  const playerSymbol = player === "" ? getPlayerSymbol() : player;
+const checkAdjacent = (grid, startPos, player) => {
+  const [row, col] = startPos;
+  const playerSymbol = player || getPlayerSymbol();
 
   const adjacentChecks = [
-    // Horizontal
-    [0, -1, 0, 1],
-    // Vertical
-    [-1, 0, 1, 0],
-    // Diagonal top-left to bottom-right
-    [-1, -1, 1, 1],
-    // Diagonal top-right to bottom-left
-    [-1, 1, 1, -1],
+    [0, -1, 0, 1], // Horizontal
+    [-1, 0, 1, 0], // Vertical
+    [-1, -1, 1, 1], // Diagonal top-left to bottom-right
+    [-1, 1, 1, -1], // Diagonal top-right to bottom-left
   ];
 
   return adjacentChecks.some(([dx1, dy1, dx2, dy2]) => {
     const firstCell =
       isValidCell(row + dx1, col + dy1) &&
-      gameGrid[row + dx1][col + dy1] === playerSymbol;
+      grid[row + dx1][col + dy1] === playerSymbol;
     const secondCell =
       isValidCell(row + dx2, col + dy2) &&
-      gameGrid[row + dx2][col + dy2] === playerSymbol;
+      grid[row + dx2][col + dy2] === playerSymbol;
     return firstCell && secondCell;
   });
 };
 
-const checkWinner = (gameGrid, gridPos, player) =>
-  checkAdjacent(gameGrid, gridPos, player) ||
-  checkLines(gameGrid, gridPos, player);
+const checkWinner = (grid, startPos, player) =>
+  checkAdjacent(grid, startPos, player) || checkLines(grid, startPos, player);
 
 // Cell click event handler
 const clickCell = (event) => {
@@ -95,7 +86,7 @@ const clickCell = (event) => {
   const row = Math.floor(cellNumber / 3);
   const col = cellNumber % 3;
 
-  if (gameGrid[row][col] === "P1" || gameGrid[row][col] === " P2") return;
+  if (gameGrid[row][col] === "P1" || gameGrid[row][col] === "P2") return;
 
   gameGrid[row][col] = getPlayerSymbol();
   cell.classList.add(`cell--${currentPlayer()}`);
@@ -105,151 +96,117 @@ const clickCell = (event) => {
     document.getElementById(`${currentPlayer()}-crown`).style.visibility =
       "visible";
   } else {
-    document.getElementById(currentPlayer()).classList.remove("current-player");
-    currentPlayerIndex = 1 - currentPlayerIndex; // Switch player
-    document.getElementById(currentPlayer()).classList.add("current-player");
+    switchPlayer();
   }
 };
 
-// Cell click event handler
+// Cell click event handler with computer mechanics
 const clickCellAI = (event) => {
+  round++;
   const cell = event.target;
   const cellNumber = parseInt(cell.textContent, 10);
   const row = Math.floor(cellNumber / 3);
   const col = cellNumber % 3;
 
-  if (gameGrid[row][col] === "P1" || gameGrid[row][col] === " P2") return;
+  if (gameGrid[row][col] === "P1" || gameGrid[row][col] === "P2") return;
 
   gameGrid[row][col] = getPlayerSymbol();
   cell.classList.add(`cell--${currentPlayer()}`);
 
   if (checkWinner(gameGrid, [row, col], "")) {
-    tableCells.forEach((cell) => cell.removeEventListener("click", clickCell));
+    tableCells.forEach((cell) =>
+      cell.removeEventListener("click", clickCellAI)
+    );
     document.getElementById(`${currentPlayer()}-crown`).style.visibility =
       "visible";
+  } else if (round > 8) {
+    tableCells.forEach((cell) =>
+      cell.removeEventListener("click", clickCellAI)
+    );
   } else {
-    document.getElementById(currentPlayer()).classList.remove("current-player");
-    currentPlayerIndex = 1 - currentPlayerIndex; // Switch player
-    document.getElementById(currentPlayer()).classList.add("current-player");
-
-    let index = minimax(
-      [...gameGrid[0], ...gameGrid[1], ...gameGrid[2]],
+    switchPlayer();
+    const aiMove = minimax(
+      flattenGrid(gameGrid),
       "P2",
       [row, col],
-      [(-5, -5)]
+      [-5, -5]
     ).index;
+    gameGrid[Math.floor(aiMove / 3)][aiMove % 3] = "P2";
+    document.getElementById(`cell-${aiMove}`).classList.add(`cell--player2`);
 
-    gameGrid[Math.floor(index / 3)][index % 3] = "P2";
-    document
-      .getElementById(`cell-${index}`)
-      .classList.add(`cell--${currentPlayer()}`);
+    if (checkWinner(gameGrid, [Math.floor(aiMove / 3), aiMove % 3], "P2")) {
+      tableCells.forEach((cell) =>
+        cell.removeEventListener("click", clickCellAI)
+      );
+      document.getElementById("player2-crown").style.visibility = "visible";
+    } else if (round === 8) {
+      tableCells.forEach((cell) =>
+        cell.removeEventListener("click", clickCellAI)
+      );
+    }
 
-    document.getElementById(currentPlayer()).classList.remove("current-player");
-    currentPlayerIndex = 1 - currentPlayerIndex; // Switch player
-    document.getElementById(currentPlayer()).classList.add("current-player");
+    switchPlayer();
   }
 };
 
-// Indicate first move to be for Player 1
+// Switch player utility function
+const switchPlayer = () => {
+  document.getElementById(currentPlayer()).classList.remove("current-player");
+  currentPlayerIndex = 1 - currentPlayerIndex;
+  document.getElementById(currentPlayer()).classList.add("current-player");
+};
+
+// Initialize first player
 document.getElementById(currentPlayer()).classList.add("current-player");
 
-// Attach event listeners to all table cells
-if (mode === "cvp")
+// Attach event listeners
+if (mode === "cvp") {
   tableCells.forEach((cell) => cell.addEventListener("click", clickCellAI));
-else tableCells.forEach((cell) => cell.addEventListener("click", clickCell));
-
-function minimax(reboard, player, P1_currPos, P2_currPos) {
-  let array = avail(reboard);
-  const gameGrid = [
-    reboard.slice(0, 3),
-    reboard.slice(3, 6),
-    reboard.slice(6, 9),
-  ];
-
-  if (checkWinner(gameGrid, P1_currPos, "P1")) {
-    return {
-      score: -10,
-    };
-  } else if (checkWinner(gameGrid, P2_currPos, "P2")) {
-    return {
-      score: 10,
-    };
-  } else if (array.length === 0) {
-    return {
-      score: 0,
-    };
-  }
-
-  var moves = [];
-  for (var i = 0; i < array.length; i++) {
-    var move = {};
-    move.index = reboard[array[i]];
-    let index = move.index;
-    reboard[array[i]] = player;
-
-    if (player === "P2") {
-      var g = minimax(reboard, "P1", P1_currPos, [
-        Math.floor(index / 3),
-        index % 3,
-      ]);
-      move.score = g.score;
-    } else {
-      var g = minimax(
-        reboard,
-        "P2",
-        [Math.floor(index / 3), index % 3],
-        P2_currPos
-      );
-      move.score = g.score;
-    }
-    reboard[array[i]] = move.index;
-    moves.push(move);
-  }
-
-  var bestMove;
-  if (player === "P2") {
-    var bestScore = -Infinity;
-    for (var i = 0; i < moves.length; i++) {
-      if (moves[i].score > bestScore) {
-        bestScore = moves[i].score;
-        bestMove = i;
-      }
-    }
-  } else {
-    var bestScore = Infinity;
-    for (var i = 0; i < moves.length; i++) {
-      if (moves[i].score < bestScore) {
-        bestScore = moves[i].score;
-        bestMove = i;
-      }
-    }
-  }
-  return moves[bestMove];
+} else {
+  tableCells.forEach((cell) => cell.addEventListener("click", clickCell));
 }
 
-//available spots
-function avail(reboard) {
-  return reboard.filter((s) => s != "P1" && s != "P2");
+// Minimax AI logic
+function minimax(board, player, humanPos, AIPos) {
+  const availableSpots = avail(board);
+  const grid = reconstructGrid(board);
+
+  if (checkWinner(grid, humanPos, "P1")) return { score: -10 };
+  if (checkWinner(grid, AIPos, "P2")) return { score: 10 };
+  if (availableSpots.length === 0) return { score: 0 };
+
+  const moves = availableSpots.map((spot) => {
+    const move = { index: board[spot] };
+    board[spot] = player;
+
+    const nextPlayer = player === "P2" ? "P1" : "P2";
+    const nextMove =
+      player === "P2"
+        ? minimax(board, nextPlayer, humanPos, [Math.floor(spot / 3), spot % 3])
+        : minimax(board, nextPlayer, [Math.floor(spot / 3), spot % 3], AIPos);
+
+    move.score = nextMove.score;
+    board[spot] = move.index;
+    return move;
+  });
+
+  return player === "P2"
+    ? moves.reduce((best, move) => (move.score > best.score ? move : best), {
+        score: -Infinity,
+      })
+    : moves.reduce((best, move) => (move.score < best.score ? move : best), {
+        score: Infinity,
+      });
+}
+// Available spots
+function avail(board) {
+  return board.filter((cell) => cell !== "P1" && cell !== "P2");
 }
 
-// /P1 WINNER
-// (3) [Array(3), Array(3), Array(3)]
-// 0
-// :
-// (3) ['P1', 'P2', 'P2']
-// 1
-// :
-// (3) ['P2', 'P1', 5]
-// 2
-// :
-// (3) ['P1', 'P1', 'P2']
-// length
-// :
-// 3
-
-// P2 WINNER
-// app.js:179 (3) [Array(3), Array(3), Array(3)]0: (3)
-// ['P1', 1, 'P2']1: (3)
-// ['P2', 'P1', 'P1']2: (3)
-//  [6, 'P1', 'P2']length: 3[[Prototype]]: Array(0)
-//  currPos: 1,2
+// Flatten and reconstruct grid utilities
+function flattenGrid(grid) {
+  return grid.flat();
+}
+function reconstructGrid(flat) {
+  return [flat.slice(0, 3), flat.slice(3, 6), flat.slice(6, 9)];
+}
