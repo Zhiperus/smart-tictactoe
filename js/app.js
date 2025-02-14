@@ -88,6 +88,9 @@ const clickCell = (event) => {
 
   if (gameGrid[row][col] === "P1" || gameGrid[row][col] === "P2") return;
 
+  round++;
+  console.log(round);
+
   gameGrid[row][col] = getPlayerSymbol();
   cell.classList.add(`cell--${currentPlayer()}`);
 
@@ -95,6 +98,8 @@ const clickCell = (event) => {
     tableCells.forEach((cell) => cell.removeEventListener("click", clickCell));
     document.getElementById(`${currentPlayer()}-crown`).style.visibility =
       "visible";
+  } else if (round === 9) {
+    document.getElementsByClassName("draw-box")[0].style.visibility = "visible";
   } else {
     switchPlayer();
   }
@@ -102,13 +107,15 @@ const clickCell = (event) => {
 
 // Cell click event handler with computer mechanics
 const clickCellAI = (event) => {
-  round++;
   const cell = event.target;
   const cellNumber = parseInt(cell.textContent, 10);
   const row = Math.floor(cellNumber / 3);
   const col = cellNumber % 3;
 
   if (gameGrid[row][col] === "P1" || gameGrid[row][col] === "P2") return;
+
+  round++;
+  console.log(round);
 
   gameGrid[row][col] = getPlayerSymbol();
   cell.classList.add(`cell--${currentPlayer()}`);
@@ -119,11 +126,13 @@ const clickCellAI = (event) => {
     );
     document.getElementById(`${currentPlayer()}-crown`).style.visibility =
       "visible";
-  } else if (round > 8) {
+  } else if (round === 9) {
+    document.getElementsByClassName("draw-box")[0].style.visibility = "visible";
     tableCells.forEach((cell) =>
       cell.removeEventListener("click", clickCellAI)
     );
   } else {
+    round++;
     switchPlayer();
     const aiMove = minimax(
       flattenGrid(gameGrid),
@@ -139,10 +148,6 @@ const clickCellAI = (event) => {
         cell.removeEventListener("click", clickCellAI)
       );
       document.getElementById("player2-crown").style.visibility = "visible";
-    } else if (round === 8) {
-      tableCells.forEach((cell) =>
-        cell.removeEventListener("click", clickCellAI)
-      );
     }
 
     switchPlayer();

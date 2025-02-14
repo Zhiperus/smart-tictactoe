@@ -1,6 +1,7 @@
 // Define players and initialize game variables
 const players = ["player1", "player2"];
 let currentPlayerIndex = 0;
+let rounds = 0;
 const tableCells = document.querySelectorAll("td");
 
 // Setup game grid and directions
@@ -80,7 +81,10 @@ const clickCell = (event) => {
   const row = Math.floor((cellNumber - 1) / 3);
   const col = (cellNumber - 1) % 3;
 
-  if (gameGrid[row][col] === "P1" || gameGrid[row][col] === " P2") return;
+  
+  if (gameGrid[row][col] === "P1" || gameGrid[row][col] === "P2") return;
+
+  rounds++;
 
   gameGrid[row][col] = getPlayerSymbol();
   cell.classList.add(`cell--${currentPlayer()}`);

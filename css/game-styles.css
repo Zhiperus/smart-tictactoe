@@ -4,8 +4,10 @@
   --secondary-color: #ecf0f1;
   --highlight-color: #27ae60;
   --border-color: #34495e;
-  --cell-size: 100px;
+  --cell-size: 150px;
   --font-family: "Arial", sans-serif;
+  --current-player-bg: green;
+  --current-player-text: white;
 }
 
 .container {
@@ -15,12 +17,28 @@
   margin-top: 12px;
   flex-grow: 1;
 
+  .draw-box {
+    visibility: hidden;
+    font-size: 20px;
+    font-weight: bold;
+    font-family: "Poppins", sans-serif;
+    text-transform: uppercase;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+    letter-spacing: 1.5px;
+  }
+
   .player-HUD {
     display: flex;
+    flex-direction: column;
     justify-content: space-around;
     align-items: center;
     width: 90%;
     margin-bottom: 20px;
+  }
+
+  .player-infos {
+    display: flex;
+    gap: 5rem;
   }
 
   .player-info {
@@ -28,7 +46,10 @@
   }
 
   .current-player {
-    background-color: green;
+    background-color: var(--current-player-bg);
+    color: var(--current-player-text);
+    transform: scale(1.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   }
 
   .crown {
@@ -39,7 +60,6 @@
 
   table {
     border-collapse: collapse;
-    margin-top: 10px;
 
     td {
       width: var(--cell-size);
@@ -54,21 +74,42 @@
       transition: background-color 0.3s ease, transform 0.2s ease;
     }
 
-    td:hover {
-      background-color: var(--highlight-color);
-      transform: scale(1.1);
+    .row-1 .cell {
+      border-top: 0px;
+    }
+
+    .row-3 .cell {
+      border-bottom: 0px;
+    }
+
+    #cell-0,
+    #cell-3,
+    #cell-6 {
+      border-left: 0px;
+    }
+
+    #cell-2,
+    #cell-5,
+    #cell-8 {
+      border-right: 0px;
+    }
+
+    .cell {
+      background-size: var(--cell-size) var(--cell-size);
+      background-repeat: no-repeat;
+      background-position: center center;
+      color: #fff;
     }
 
     .cell--player1 {
       background-image: url(../images/X.png);
-      background-size: var(--cell-size) var(--cell-size);
-      color: #fff;
+      animation-name: place;
+      animation-duration: 0.2s;
     }
 
     .cell--player2 {
       background-image: url(../images/O.png);
-      background-size: var(--cell-size) var(--cell-size);
-      color: #fff;
+      animation: place 0.2s cubic-bezier(0.5, 1.8, 0.1, 1.1);
     }
 
     .cell--win {
@@ -97,6 +138,15 @@
 
 footer {
   margin-top: 35px;
+}
+
+@keyframes place {
+  from {
+    transform: scale(0.3);
+  }
+  to {
+    transform: scale(1);
+  }
 }
 
 @keyframes glow {
